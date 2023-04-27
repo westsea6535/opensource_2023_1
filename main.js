@@ -21,7 +21,7 @@ function createWindow() {
             nodeIntegration: true,
             preload: path.join(__dirname, 'preload.js'),
             // enableRemoteModule: true,
-            // contextIsolation: false
+            contextIsolation: false
         },
         icon: path.join(__dirname, 'public/favicon.png'),
         show: false

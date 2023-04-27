@@ -1,25 +1,57 @@
 <script>
-	export let name;
+	import readFile from './file.js';
+
+	let link = 'C:/Users';
+	let files;
+	$: files = readFile(link);
 </script>
 
 <main>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
+	<div id="navigator">{link}</div>
+	<div id="fileList">
+		<div id="files">
+			{#each files as fileName}
+				{#if !Object.values(fileName).includes('.')}
+					<div class="fileTitle"
+						on:click={() =>{
+							link = `${link}/${Object.values(fileName)}`
+							files = readFile(link);
+						}}>
+						<span>{Object.values(fileName)}</span>
+					</div>
+				{:else}
+					<div class="fileTitle">
+						<span>{Object.values(fileName)}</span>
+					</div>
+				{/if}
+			{/each}
+		</div>
+	</div>
 </main>
 
 <style>
 	main {
-		text-align: center;
-		padding: 1em;
-		max-width: 240px;
-		margin: 0 auto;
+		border: 3px solid #888;
+		display: flex;
+		min-height: calc(100vh - 10px);
+		max-height: calc(100vh - 10px);
+		min-width: calc(100% - 10px);
+		box-sizing: border-box;
+		position: fixed;
 	}
-
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
+	#navigator {
+		width: 100px;
+		background-color: #cdcdcd;
+		border-right: 1px solid black;
+		overflow-y: scroll;
+	}
+	#fileList {
+		overflow-y: scroll;
+		flex: 1;
+	}
+	#files {
+		display: flex;
+		flex-direction: column;
 	}
 
 	@media (min-width: 640px) {
