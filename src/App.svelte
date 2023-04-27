@@ -1,9 +1,17 @@
 <script>
-	import readFile from './file.js';
+	import { readFromDir, checkDir, fs } from './file.js';
+	// import readFromDir from './file.js';
 
 	let link = 'C:/Users';
 	let files;
-	$: files = readFile(link);
+
+	$: files = readFromDir(link);
+
+	const getFileTime = (fileName) => {
+		const time = fs.statSync(`${link}/${Object.values(fileName)}`).mtime.getTime();
+		const fileDate = new Date(time);
+		return `${fileDate.getFullYear(fileDate)}-${fileDate.getMonth(fileDate)}-${fileDate.getDate(fileDate)} ${fileDate.getHours(fileDate)}:${fileDate.getMinutes(fileDate)}`;
+	}
 </script>
 
 <main>
@@ -11,19 +19,16 @@
 	<div id="fileList">
 		<div id="files">
 			{#each files as fileName}
-				{#if !Object.values(fileName).includes('.')}
-					<div class="fileTitle"
-						on:click={() =>{
+				<div class="fileTitle"
+					on:click={() =>{
+						if (fileName.isDirectory()) {
 							link = `${link}/${Object.values(fileName)}`
-							files = readFile(link);
-						}}>
-						<span>{Object.values(fileName)}</span>
-					</div>
-				{:else}
-					<div class="fileTitle">
-						<span>{Object.values(fileName)}</span>
-					</div>
-				{/if}
+							files = readFromDir(link);
+						}
+					}}>
+					<span>{Object.values(fileName)}</span>
+					<span>{getFileTime(fileName)}</span>
+				</div>
 			{/each}
 		</div>
 	</div>
@@ -39,11 +44,18 @@
 		box-sizing: border-box;
 		position: fixed;
 	}
+	.fileTitle {
+		display: flex;
+	}
+	.fileTitle span:nth-child(1) {
+		width: 60vw;
+	}
 	#navigator {
 		width: 100px;
 		background-color: #cdcdcd;
 		border-right: 1px solid black;
 		overflow-y: scroll;
+		font-size: 5px;
 	}
 	#fileList {
 		overflow-y: scroll;
